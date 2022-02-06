@@ -1,34 +1,36 @@
+import React, { useState } from 'react';
+import { useQuery } from '@apollo/client';
+import { ALL_AUTHORS, ALL_BOOKS } from './queries';
 
-import React, { useState } from 'react'
-import Authors from './components/Authors'
-import Books from './components/Books'
-import NewBook from './components/NewBook'
+import Authors from './components/Authors';
+import Books from './components/Books';
+import NewBook from './components/NewBook';
 
 const App = () => {
-  const [page, setPage] = useState('authors')
+    const [page, setPage] = useState('authors');
+    const allAuthorsQuery = useQuery(ALL_AUTHORS);
+    const allBooksQuery = useQuery(ALL_BOOKS);
 
-  return (
-    <div>
-      <div>
-        <button onClick={() => setPage('authors')}>authors</button>
-        <button onClick={() => setPage('books')}>books</button>
-        <button onClick={() => setPage('add')}>add book</button>
-      </div>
+    //is the right??
+    if (allAuthorsQuery.loading || allBooksQuery.loading) {
+        return <div>loading...</div>;
+    }
 
-      <Authors
-        show={page === 'authors'}
-      />
+    return (
+        <div>
+            <div>
+                <button onClick={() => setPage('authors')}>authors</button>
+                <button onClick={() => setPage('books')}>books</button>
+                <button onClick={() => setPage('add')}>add book</button>
+            </div>
 
-      <Books
-        show={page === 'books'}
-      />
+            <Authors show={page === 'authors'} authors={allAuthorsQuery.data.allAuthors} />
 
-      <NewBook
-        show={page === 'add'}
-      />
+            <Books show={page === 'books'} books={allBooksQuery.data.allBooks} />
 
-    </div>
-  )
-}
+            <NewBook show={page === 'add'} />
+        </div>
+    );
+};
 
-export default App
+export default App;
