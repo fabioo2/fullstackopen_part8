@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useMutation } from '@apollo/client';
-import { LOGIN } from '../queries';
+import { useMutation, useLazyQuery, useApolloClient } from '@apollo/client';
+import { LOGIN, ME } from '../queries';
 
-const LoginForm = ({ setError, setToken, show, setPage }) => {
+const LoginForm = ({ setError, setToken, show, setPage, setUser }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [meQuery] = useLazyQuery(ME);
+    const client = useApolloClient();
 
     const [login, result] = useMutation(LOGIN, {
         onError: (error) => {
@@ -18,13 +20,16 @@ const LoginForm = ({ setError, setToken, show, setPage }) => {
             setToken(token);
             localStorage.setItem('books-user-token', token);
             console.log(localStorage);
+            client.refetchQueries({ include: [ME] });
         }
     }, [result.data]); // eslint-disable-line
 
     const submit = async (event) => {
         event.preventDefault();
-
         login({ variables: { username, password } });
+        const user = await meQuery();
+        console.log(user);
+        setUser(user);
         setPage('authors');
     };
 

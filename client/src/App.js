@@ -11,11 +11,12 @@ import LoginForm from './components/LoginForm';
 import Notify from './components/Notify';
 
 const App = () => {
-    const [page, setPage] = useState('authors');
     const allAuthorsQuery = useQuery(ALL_AUTHORS);
     const allBooksQuery = useQuery(ALL_BOOKS);
     const allGenresQuery = useQuery(ALL_GENRES);
 
+    const [page, setPage] = useState('authors');
+    const [user, setUser] = useState({});
     const [token, setToken] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
 
@@ -31,6 +32,7 @@ const App = () => {
     const logout = () => {
         setToken(null);
         localStorage.clear();
+        client.cache.reset();
         client.resetStore();
         setPage('authors');
     };
@@ -72,11 +74,11 @@ const App = () => {
         <div>
             <Notify errorMessage={errorMessage} />
             <NavBar />
-            <Authors show={page === 'authors'} authors={allAuthorsQuery.data.allAuthors} />
+            <Authors show={page === 'authors'} authors={allAuthorsQuery.data.allAuthors} token={token} />
             <Books show={page === 'books'} setPage={setPage} books={allBooksQuery} genres={allGenresQuery} />
-            <Recommendations show={page === 'recommend'} />
-            <NewBook show={page === 'add'} setPage={setPage} />
-            <LoginForm show={page === 'login'} setToken={setToken} setError={notify} setPage={setPage} />
+            <Recommendations show={page === 'recommend'} user={user} />
+            <NewBook show={page === 'add'} setPage={setPage} setError={setErrorMessage} />
+            <LoginForm show={page === 'login'} setToken={setToken} setError={notify} setPage={setPage} setUser={setUser} />
         </div>
     );
 };

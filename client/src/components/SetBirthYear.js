@@ -4,12 +4,16 @@ import { useMutation } from '@apollo/client';
 
 import { EDIT_AUTHOR, ALL_AUTHORS } from '../queries';
 
-const SetBirthYear = ({ authors }) => {
+const SetBirthYear = ({ authors, token }) => {
     const [born, setBorn] = useState('');
     const [selectedOption, setSelectedOption] = useState(null);
     const [editAuthor] = useMutation(EDIT_AUTHOR, {
         refetchQueries: [{ query: ALL_AUTHORS }],
     });
+
+    if (!token) {
+        return null;
+    }
 
     const options = authors.map((author) => {
         return { value: author.name, label: author.name };

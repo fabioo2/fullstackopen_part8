@@ -11,10 +11,10 @@ const Recommendations = (props) => {
     });
 
     useEffect(() => {
-        if (meQuery.data && props.show) {
+        if (props.user && meQuery.data && props.show) {
             setFavouriteGenre(meQuery.data.me.favoriteGenre);
         }
-    }, [meQuery.data, props.show]);
+    }, [meQuery.data, props.show, props.user]);
 
     const recommendedBooksQuery = useQuery(RECOMMENDED_BOOKS, { variables: { genre: favoriteGenre } });
 

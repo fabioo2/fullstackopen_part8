@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Books = (props) => {
+    const [books, setBooks] = useState([]);
+
+    useEffect(() => {
+        if (props.show && props.books) {
+            setBooks(props.books.data.allBooks);
+        }
+    }, [props.books, props.show]);
+
     if (!props.show) {
         return null;
     }
-    const books = props.books.data.allBooks;
+
     const genres = props.genres.data.allBooks.map((genre) => {
         return genre.genres;
     });
